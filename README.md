@@ -9,11 +9,16 @@ Compared to the last crawl this script will let you know, if there are differenc
 $pip3 install scrapy
 
 #set your login credentials
-$nano login_credentials.py```
+$nano login_credentials.py
+```
 Ja, der Login der Hochschule. Lasst das Script also nur laufen (und die Dateien liegen) auf Maschinen, denen Ihr vertraut ;)
 
-```#run in same dir
-$scrapy runspider icms_crawler.py```
+---
+
+```
+#run in same dir
+$scrapy runspider icms_crawler.py
+```
 
 ## Background
 Im iCMS (integriertes Campus Management System der Hochschule Hannover) "holt man sich seine Noten ab".
@@ -29,18 +34,24 @@ Und kommt auf:
 https://icms.hs-hannover.de/qisserver/rds?state=user&type=1&category=auth.login&startpage=portal.vm 
 
 Hier klickt man nun auf "Prüfungen", den Zugang zum eigentlichen POS.
-```<a href="https://icms.hs-hannover.de/qisserver/rds?state=change&amp;type=1&amp;moduleParameter=studyPOSMenu&amp;nextdir=change&amp;next=menu.vm&amp;subdir=applications&amp;xml=menu&amp;purge=y&amp;navigationPosition=functions%2CstudyPOSMenu&amp;breadcrumb=studyPOSMenu&amp;topitem=functions&amp;subitem=studyPOSMenu" class="visited " target="_self">Prüfungen</a>```
+```
+	<a href="https://icms.hs-hannover.de/qisserver/rds?state=change&amp;type=1&amp;moduleParameter=studyPOSMenu&amp;nextdir=change&amp;next=menu.vm&amp;subdir=applications&amp;xml=menu&amp;purge=y&amp;navigationPosition=functions%2CstudyPOSMenu&amp;breadcrumb=studyPOSMenu&amp;topitem=functions&amp;subitem=studyPOSMenu" class="visited " target="_self">Prüfungen</a>
+```
 Ausreichend eindeutig ist hier der XPath: `//*[contains(@href, 'moduleParameter=studyPOSMenu')]`
 
 Vermutlich liegt bei der HsH noch eine WAF davor, die sämtliche Links mit einer Sitzung-ID versieht (in diesem Beispiel "`asi=JJ2xAKmILbgrerCT19KM`").
 Also finden wir alle notwendigen Links, unabhängig dieser "asi"-ID mit signifikanten XPathes.
 
 Im folgenden Menü nun auf "Notenspiegel"
-```<a href="https://icms.hs-hannover.de/qisserver/rds?state=notenspiegelStudent&amp;next=tree.vm&amp;nextdir=qispos/notenspiegel/student&amp;menuid=notenspiegelStudent&amp;breadcrumb=notenspiegel&amp;breadCrumbSource=menu&amp;asi=JJ2xAKmILbgrerCT19KM" title="" class="auflistung">Notenspiegel</a>```
+```
+	<a href="https://icms.hs-hannover.de/qisserver/rds?state=notenspiegelStudent&amp;next=tree.vm&amp;nextdir=qispos/notenspiegel/student&amp;menuid=notenspiegelStudent&amp;breadcrumb=notenspiegel&amp;breadCrumbSource=menu&amp;asi=JJ2xAKmILbgrerCT19KM" title="" class="auflistung">Notenspiegel</a>
+```
 XPath: `//*[contains(@href, 'qispos/notenspiegel/student&menuid=notenspiegelStudent')]`
 
 Und hier dann auf das (i)-Image, um zur Notenübersicht zu gelangen:
-```<a href="https://icms.hs-hannover.de/qisserver/rds?state=notenspiegelStudent&amp;next=list.vm&amp;nextdir=qispos/notenspiegel/student&amp;createInfos=Y&amp;struct=auswahlBaum&amp;nodeID=auswahlBaum%7Cabschluss%3Aabschl%3D90%2Cstgnr%3D1&amp;expand=0&amp;asi=JJ2xAKmILbgrerCT19KM#auswahlBaum%7Cabschluss%3Aabschl%3D90%2Cstgnr%3D1" title="Leistungen für Abschluss 90 Master anzeigen"><img src="/QIS/images//information.svg" alt="Leistungen für Abschluss 90 Master anzeigen" title="Leistungen für Abschluss 90 Master anzeigen"></a>```
+```
+	<a href="https://icms.hs-hannover.de/qisserver/rds?state=notenspiegelStudent&amp;next=list.vm&amp;nextdir=qispos/notenspiegel/student&amp;createInfos=Y&amp;struct=auswahlBaum&amp;nodeID=auswahlBaum%7Cabschluss%3Aabschl%3D90%2Cstgnr%3D1&amp;expand=0&amp;asi=JJ2xAKmILbgrerCT19KM#auswahlBaum%7Cabschluss%3Aabschl%3D90%2Cstgnr%3D1" title="Leistungen für Abschluss 90 Master anzeigen"><img src="/QIS/images//information.svg" alt="Leistungen für Abschluss 90 Master anzeigen" title="Leistungen für Abschluss 90 Master anzeigen"></a>
+```
 XPath: `//*[contains(@href, 'qispos/notenspiegel/student&createInfos=Y')]`
 
 In der ganzen Seite sind noch abhängig von der ID Kommentare und Links versteckt. 

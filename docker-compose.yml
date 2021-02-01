@@ -1,0 +1,12 @@
+version: '3'
+services:
+  icms_crawler:
+    build: .
+    container_name: icms_crawler
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - ./icms_crawler:/icms_crawler:rw
+    dns:
+      - 8.8.8.8
